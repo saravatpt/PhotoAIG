@@ -2,7 +2,7 @@ name: Deploy to Cloud Run
 
 on:
   push:
-    branches: [ "prod-2025" ]
+    branches: [ "release-2025" ]
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
