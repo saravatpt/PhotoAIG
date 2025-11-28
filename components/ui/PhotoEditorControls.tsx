@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Contrast, Thermometer, Palette, RotateCcw, Eraser, Image as ImageIcon, Wand2 } from "lucide-react";
 
+import { PromptLibrary } from "@/components/ui/PromptLibrary";
+
 interface PhotoEditorControlsProps {
     onPromptChange: (prompt: string) => void;
     className?: string;
+    onGenerate?: () => void;
+    isGenerating?: boolean;
+    canGenerate?: boolean;
 }
 
 const STYLES = [
@@ -21,6 +26,9 @@ const STYLES = [
 export default function PhotoEditorControls({
     onPromptChange,
     className = "",
+    onGenerate,
+    isGenerating = false,
+    canGenerate = false,
 }: PhotoEditorControlsProps) {
     const [brightness, setBrightness] = useState(0);
     const [contrast, setContrast] = useState(0);
@@ -115,13 +123,19 @@ export default function PhotoEditorControls({
                 <h3 className="text-sm font-semibold uppercase tracking-wider opacity-70">
                     Photo Editor
                 </h3>
-                <button
-                    onClick={handleReset}
-                    className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
-                    title="Reset all"
-                >
-                    <RotateCcw className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleReset}
+                        className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                        title="Reset all"
+                    >
+                        <RotateCcw className="w-4 h-4" />
+                    </button>
+                    <PromptLibrary
+                        currentPrompt={""}
+                        onSelectPrompt={(text) => onPromptChange(text)}
+                    />
+                </div>
             </div>
 
             <div className="space-y-6">
@@ -295,6 +309,29 @@ export default function PhotoEditorControls({
                         ))}
                     </div>
                 </div>
+
+                {onGenerate && (
+                    <>
+                        <div className="h-px bg-white/10" />
+                        <button
+                            onClick={onGenerate}
+                            disabled={isGenerating || !canGenerate}
+                            className={`w-full py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all ${isGenerating || !canGenerate
+                                ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                                : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg hover:shadow-indigo-500/25"
+                                }`}
+                        >
+                            {isGenerating ? (
+                                <>Generating...</>
+                            ) : (
+                                <>
+                                    <Wand2 className="w-4 h-4 fill-current" />
+                                    Generate Edit
+                                </>
+                            )}
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

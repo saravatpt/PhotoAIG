@@ -9,6 +9,7 @@ import {
   Video,
   Download,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import ModelSelector from "@/components/ui/ModelSelector";
 import {
@@ -16,11 +17,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PromptLibrary } from "@/components/ui/PromptLibrary";
 
 type StudioMode =
   | "create-image"
   | "edit-image"
   | "compose-image"
+  | "compose-album"
   | "create-video";
 
 interface ComposerProps {
@@ -94,6 +97,8 @@ const Composer: React.FC<ComposerProps> = ({
         return "Edit Image";
       case "compose-image":
         return "Compose Image";
+      case "compose-album":
+        return "Compose Album";
       case "create-video":
         return "Create Video";
       default:
@@ -203,6 +208,20 @@ const Composer: React.FC<ComposerProps> = ({
             >
               <RotateCcw className="w-5 h-5" />
             </button>
+            <PromptLibrary
+              currentPrompt={
+                mode === "create-image" ? imagePrompt :
+                  mode === "edit-image" ? editPrompt :
+                    mode === "compose-image" ? composePrompt :
+                      prompt
+              }
+              onSelectPrompt={(text) => {
+                if (mode === "create-image") setImagePrompt(text);
+                else if (mode === "edit-image") setEditPrompt(text);
+                else if (mode === "compose-image") setComposePrompt(text);
+                else setPrompt(text);
+              }}
+            />
           </div>
           <button
             onClick={startGeneration}
@@ -308,29 +327,44 @@ const Composer: React.FC<ComposerProps> = ({
             <TooltipTrigger asChild>
               <button
                 onClick={() =>
-                  !isTabDisabled("create-video") && setMode("create-video")
+                  !isTabDisabled("compose-album") && setMode("compose-album")
                 }
-                disabled={isTabDisabled("create-video")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition flex-1 ${mode === "create-video"
-                  ? "bg-purple-400/30 text-slate-900 backdrop-blur-sm"
-                  : isTabDisabled("create-video")
+                disabled={isTabDisabled("compose-album")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition flex-1 ${mode === "compose-album"
+                  ? "bg-pink-400/30 text-slate-900 backdrop-blur-sm"
+                  : isTabDisabled("compose-album")
                     ? "text-slate-400 cursor-not-allowed opacity-50"
                     : "text-slate-700 hover:bg-white/30 hover:text-slate-900"
                   }`}
               >
-                <Video className="w-4 h-4" />
-                {getTabText("create-video")}
+                <Image className="w-4 h-4" />
+                {getTabText("compose-album")}
               </button>
             </TooltipTrigger>
-            {getTabTooltip("create-video") && (
+            {getTabTooltip("compose-album") && (
               <TooltipContent>
-                <p>{getTabTooltip("create-video")}</p>
+                <p>{getTabTooltip("compose-album")}</p>
               </TooltipContent>
             )}
           </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                disabled={true}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition flex-1 bg-gray-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-60`}
+              >
+                <Video className="w-4 h-4" />
+                {getTabText("create-video")}
+                <Lock className="w-3 h-3 ml-1" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Create Video (Premium Only)</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
