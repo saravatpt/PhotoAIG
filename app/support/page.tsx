@@ -35,13 +35,13 @@ export default function SupportPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white">
+        <div className="min-h-screen bg-background text-foreground">
             {/* Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-white/20 dark:border-slate-800 shadow-sm">
+            <div className="fixed top-0 left-0 right-0 z-[var(--z-header)] flex items-center justify-between px-6 py-3 bg-background/75 backdrop-blur-md border-b border-border shadow-sm">
                 <div className="flex items-center gap-4">
                     <Link
                         href="/"
-                        className="p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                        className="p-2 -ml-2 text-muted-foreground hover:bg-accent rounded-full transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
@@ -50,12 +50,12 @@ export default function SupportPage() {
             </div>
 
             <div className="container mx-auto px-4 pt-24 pb-12 max-w-2xl">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-                    <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20">
-                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                <div className="bg-elevated rounded-2xl shadow-xl border border-border overflow-hidden">
+                    <div className="p-8 border-b border-border bg-gradient-to-r from-primary/8 to-transparent">
+                        <h1 className="text-3xl font-bold text-foreground mb-2">
                             Support Center
                         </h1>
-                        <p className="text-slate-600 dark:text-slate-400">
+                        <p className="text-muted-foreground">
                             Have a question or need help? Send us a message and we&apos;ll get back to you as soon as possible.
                         </p>
                     </div>
@@ -63,18 +63,18 @@ export default function SupportPage() {
                     <div className="p-8">
                         {isSubmitted ? (
                             <div className="text-center py-12">
-                                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 dark:text-green-400">
+                                <div className="w-16 h-16 bg-success/12 rounded-full flex items-center justify-center mx-auto mb-6 text-success">
                                     <CheckCircle className="w-8 h-8" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                                <h2 className="text-2xl font-bold text-foreground mb-2">
                                     Message Sent!
                                 </h2>
-                                <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
+                                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                                     Thank you for contacting us. We have received your message and will respond to your email shortly.
                                 </p>
                                 <button
                                     onClick={() => setIsSubmitted(false)}
-                                    className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+                                    className="px-6 py-2.5 bg-primary text-primary-foreground hover:brightness-110 font-medium rounded-lg transition-colors"
                                 >
                                     Send Another Message
                                 </button>
@@ -83,7 +83,7 @@ export default function SupportPage() {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <label htmlFor="name" className="text-sm font-medium text-foreground">
                                             Name
                                         </label>
                                         <input
@@ -93,12 +93,12 @@ export default function SupportPage() {
                                             required
                                             value={formData.name}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                            className="w-full px-4 py-2.5 border border-input rounded-lg bg-elevated outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring transition-all"
                                             placeholder="Your name"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <label htmlFor="email" className="text-sm font-medium text-foreground">
                                             Email
                                         </label>
                                         <input
@@ -108,14 +108,14 @@ export default function SupportPage() {
                                             required
                                             value={formData.email}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                            className="w-full px-4 py-2.5 border border-input rounded-lg bg-elevated outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring transition-all"
                                             placeholder="your@email.com"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="subject" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <label htmlFor="subject" className="text-sm font-medium text-foreground">
                                         Subject
                                     </label>
                                     <input
@@ -125,13 +125,13 @@ export default function SupportPage() {
                                         required
                                         value={formData.subject}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                        className="w-full px-4 py-2.5 border border-input rounded-lg bg-elevated outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring transition-all"
                                         placeholder="How can we help?"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="message" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <label htmlFor="message" className="text-sm font-medium text-foreground">
                                         Message
                                     </label>
                                     <textarea
@@ -141,7 +141,7 @@ export default function SupportPage() {
                                         rows={6}
                                         value={formData.message}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none"
+                                        className="w-full px-4 py-2.5 border border-input rounded-lg bg-elevated outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring transition-all resize-none"
                                         placeholder="Describe your issue or question..."
                                     />
                                 </div>
@@ -149,7 +149,7 @@ export default function SupportPage() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    className="w-full py-3 px-4 bg-primary text-primary-foreground hover:brightness-110 font-medium rounded-lg shadow-glow transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <>
