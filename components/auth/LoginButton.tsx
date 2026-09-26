@@ -4,8 +4,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import CreditDisplay from '@/components/credits/CreditDisplay'
+import Image from 'next/image'
 
-export default function LoginButton() {
+export default function LoginButton({ onOpenPricing }: { onOpenPricing?: () => void }) {
     const [loading, setLoading] = useState(false)
     const [user, setUser] = useState<User | null>(null)
 
@@ -49,13 +50,16 @@ export default function LoginButton() {
     if (user) {
         return (
             <div className="flex items-center gap-4">
-                <CreditDisplay />
+                <CreditDisplay onOpenPricing={onOpenPricing} />
                 <div className="flex items-center gap-2">
-                    {user.user_metadata.avatar_url && (
-                        <img
-                            src={user.user_metadata.avatar_url}
+                    {(user.user_metadata.avatar_url || user.user_metadata.picture) && (
+                        <Image
+                            src={user.user_metadata.avatar_url || user.user_metadata.picture}
                             alt="Avatar"
-                            className="w-8 h-8 rounded-full"
+                            width={32}
+                            height={32}
+                            className="rounded-full border border-border"
+                            unoptimized
                         />
                     )}
                     <span className="text-sm font-medium hidden sm:block">
@@ -65,7 +69,7 @@ export default function LoginButton() {
                 <button
                     onClick={handleLogout}
                     disabled={loading}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-stone-900 dark:text-white rounded-full text-sm font-medium transition-colors backdrop-blur-sm border border-white/20"
+                    className="shrink-0 whitespace-nowrap rounded-full border border-border bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-accent disabled:opacity-50 sm:px-4"
                 >
                     {loading ? 'Signing out...' : 'Sign out'}
                 </button>
@@ -77,9 +81,14 @@ export default function LoginButton() {
         <button
             onClick={handleLogin}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-colors disabled:opacity-50 shadow-sm"
+            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-glow transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 sm:px-4"
         >
-            {loading ? 'Signing in...' : 'Sign in with Google'}
+            {loading ? 'Signing in...' : (
+                <>
+                    <span className="hidden sm:inline">Sign in with Google</span>
+                    <span className="sm:hidden">Sign in</span>
+                </>
+            )}
         </button>
     )
 }

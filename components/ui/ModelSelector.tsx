@@ -1,4 +1,5 @@
 import React from "react";
+import { Select } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
 
 type StudioMode =
@@ -46,19 +47,19 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
 
   return (
     <div className="relative flex items-center">
-      <select
+      <Select
         aria-label="Model selector"
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
-        className="pl-3 pr-8 py-2 text-sm rounded-md border  focus:outline-none focus:ring-2 focus:ring-gray-500 appearance-none"
+        className="h-9 w-auto min-w-40 border-transparent bg-secondary text-xs font-medium"
       >
         {models.map((model) => (
           <option key={model} value={model}>
             {formatModelName(model)}
           </option>
         ))}
-      </select>
-      <ChevronDown className="absolute right-3 h-4 w-4 text-gray-400 pointer-events-none" />
+      </Select>
+      <ChevronDown className="pointer-events-none absolute right-2.5 size-4 text-muted-foreground" />
     </div>
   );
 };

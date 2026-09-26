@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Sun, Contrast, Thermometer, Palette, RotateCcw, Eraser, Image as ImageIcon, Wand2 } from "lucide-react";
+import { Sun, Contrast, Thermometer, Palette, RotateCcw, Eraser, Image as ImageIcon, Wand2, Sparkles } from "lucide-react";
 
 import { PromptLibrary } from "@/components/ui/PromptLibrary";
 
@@ -23,6 +23,20 @@ const STYLES = [
     { value: "watercolor", label: "Watercolor" },
 ];
 
+interface SamplePrompt {
+    id: string;
+    label: string;
+    image: string;
+    prompt: string;
+    alias?: string;
+}
+
+interface PromptGroup {
+    id: string;
+    label: string;
+    items: SamplePrompt[];
+}
+
 export default function PhotoEditorControls({
     onPromptChange,
     className = "",
@@ -39,6 +53,23 @@ export default function PhotoEditorControls({
     const [backgroundAction, setBackgroundAction] = useState<string | null>(null);
     const [removalAction, setRemovalAction] = useState<string | null>(null);
     const [enhancementAction, setEnhancementAction] = useState<string | null>(null);
+
+    // Face Cleanup state
+    const [faceCleanupPrompts, setFaceCleanupPrompts] = useState<SamplePrompt[]>([]);
+    const [cleanupAction, setCleanupAction] = useState<string | null>(null);
+
+    // Fetch cleanup prompts
+    useEffect(() => {
+        fetch("/prompt.json")
+            .then(res => res.json())
+            .then((data: PromptGroup[]) => {
+                const cleanupGroup = data.find(g => g.id === "Face_Cleanup");
+                if (cleanupGroup) {
+                    setFaceCleanupPrompts(cleanupGroup.items);
+                }
+            })
+            .catch(err => console.error("Failed to load prompts:", err));
+    }, []);
 
     // Generate prompt whenever values change
     useEffect(() => {
@@ -96,6 +127,14 @@ export default function PhotoEditorControls({
             parts.push("make the image high resolution, sharp details, 4k");
         }
 
+        // Face Cleanup Actions
+        if (cleanupAction) {
+            const selectedCleanup = faceCleanupPrompts.find(p => p.id === cleanupAction);
+            if (selectedCleanup) {
+                parts.push(selectedCleanup.prompt);
+            }
+        }
+
         // Base instruction if nothing selected, or combine parts
         const prompt =
             parts.length > 0
@@ -103,7 +142,7 @@ export default function PhotoEditorControls({
                 : "";
 
         onPromptChange(prompt);
-    }, [brightness, contrast, warmth, style, backgroundAction, removalAction, enhancementAction, onPromptChange]);
+    }, [brightness, contrast, warmth, style, backgroundAction, removalAction, enhancementAction, cleanupAction, faceCleanupPrompts, onPromptChange]);
 
     const handleReset = () => {
         setBrightness(0);
@@ -113,20 +152,21 @@ export default function PhotoEditorControls({
         setBackgroundAction(null);
         setRemovalAction(null);
         setEnhancementAction(null);
+        setCleanupAction(null);
     };
 
     return (
         <div
-            className={`bg-white/80 dark:bg-black/60 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl text-slate-800 dark:text-slate-100 overflow-y-auto max-h-[80vh] ${className}`}
+            className={`p-4 text-card-foreground ${className}`}
         >
-            <div className="flex items-center justify-between mb-4 sticky top-0 bg-white/5 backdrop-blur-md p-2 -mx-2 rounded-lg z-10">
-                <h3 className="text-sm font-semibold uppercase tracking-wider opacity-70">
+            <div className="sticky top-0 z-10 -mx-4 mb-4 flex items-center justify-between border-b border-border bg-card/90 px-4 py-2.5 backdrop-blur-md">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Photo Editor
                 </h3>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleReset}
-                        className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                        className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                         title="Reset all"
                     >
                         <RotateCcw className="w-4 h-4" />
@@ -141,7 +181,7 @@ export default function PhotoEditorControls({
             <div className="space-y-6">
                 {/* Basic Adjustments */}
                 <div className="space-y-4">
-                    <h4 className="text-xs font-medium opacity-50 uppercase tracking-wider">Adjustments</h4>
+                    <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Adjustments</h4>
 
                     {/* Brightness */}
                     <div className="space-y-2">
@@ -150,7 +190,7 @@ export default function PhotoEditorControls({
                                 <Sun className="w-3.5 h-3.5" />
                                 <span>Brightness</span>
                             </div>
-                            <span className="opacity-70">{brightness > 0 ? "+" : ""}{brightness}</span>
+                            <span className="tabular-nums text-muted-foreground">{brightness > 0 ? "+" : ""}{brightness}</span>
                         </div>
                         <input
                             type="range"
@@ -158,7 +198,7 @@ export default function PhotoEditorControls({
                             max="100"
                             value={brightness}
                             onChange={(e) => setBrightness(parseInt(e.target.value))}
-                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500"
+                            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
                         />
                     </div>
 
@@ -169,7 +209,7 @@ export default function PhotoEditorControls({
                                 <Contrast className="w-3.5 h-3.5" />
                                 <span>Contrast</span>
                             </div>
-                            <span className="opacity-70">{contrast > 0 ? "+" : ""}{contrast}</span>
+                            <span className="tabular-nums text-muted-foreground">{contrast > 0 ? "+" : ""}{contrast}</span>
                         </div>
                         <input
                             type="range"
@@ -177,7 +217,7 @@ export default function PhotoEditorControls({
                             max="100"
                             value={contrast}
                             onChange={(e) => setContrast(parseInt(e.target.value))}
-                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500"
+                            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
                         />
                     </div>
 
@@ -188,9 +228,9 @@ export default function PhotoEditorControls({
                                 <Thermometer className="w-3.5 h-3.5" />
                                 <span>Warmth</span>
                             </div>
-                            <span className="opacity-70">{warmth > 0 ? "+" : ""}{warmth}</span>
+                            <span className="tabular-nums text-muted-foreground">{warmth > 0 ? "+" : ""}{warmth}</span>
                         </div>
-                        <div className="relative w-full h-1.5 bg-gradient-to-r from-blue-300 via-gray-200 to-orange-300 rounded-lg">
+                        <div className="relative h-1.5 w-full rounded-lg bg-gradient-to-r from-mode-edit/70 via-muted to-mode-video/80">
                             <input
                                 type="range"
                                 min="-100"
@@ -200,18 +240,18 @@ export default function PhotoEditorControls({
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
                             <div
-                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border border-gray-300 rounded-full shadow-sm pointer-events-none"
+                                className="pointer-events-none absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full border-2 border-background bg-primary shadow-sm"
                                 style={{ left: `${((warmth + 100) / 200) * 100}%`, transform: 'translate(-50%, -50%)' }}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-border" />
 
                 {/* Advanced Actions */}
                 <div className="space-y-4">
-                    <h4 className="text-xs font-medium opacity-50 uppercase tracking-wider">Advanced Tools</h4>
+                    <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Advanced Tools</h4>
 
                     {/* Background */}
                     <div className="space-y-2">
@@ -222,19 +262,19 @@ export default function PhotoEditorControls({
                         <div className="grid grid-cols-1 gap-2">
                             <button
                                 onClick={() => setBackgroundAction(backgroundAction === "remove" ? null : "remove")}
-                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "remove" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "remove" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Remove Background
                             </button>
                             <button
                                 onClick={() => setBackgroundAction(backgroundAction === "blur" ? null : "blur")}
-                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "blur" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "blur" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Blur Background
                             </button>
                             <button
                                 onClick={() => setBackgroundAction(backgroundAction === "bw" ? null : "bw")}
-                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "bw" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${backgroundAction === "bw" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 B&W Background
                             </button>
@@ -250,13 +290,13 @@ export default function PhotoEditorControls({
                         <div className="grid grid-cols-2 gap-2">
                             <button
                                 onClick={() => setRemovalAction(removalAction === "people" ? null : "people")}
-                                className={`text-xs py-2 px-3 rounded-md border transition-all ${removalAction === "people" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border transition-all ${removalAction === "people" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Remove People
                             </button>
                             <button
                                 onClick={() => setRemovalAction(removalAction === "text" ? null : "text")}
-                                className={`text-xs py-2 px-3 rounded-md border transition-all ${removalAction === "text" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border transition-all ${removalAction === "text" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Remove Text
                             </button>
@@ -272,21 +312,45 @@ export default function PhotoEditorControls({
                         <div className="grid grid-cols-2 gap-2">
                             <button
                                 onClick={() => setEnhancementAction(enhancementAction === "lighting" ? null : "lighting")}
-                                className={`text-xs py-2 px-3 rounded-md border transition-all ${enhancementAction === "lighting" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border transition-all ${enhancementAction === "lighting" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Fix Lighting
                             </button>
                             <button
                                 onClick={() => setEnhancementAction(enhancementAction === "sharpen" ? null : "sharpen")}
-                                className={`text-xs py-2 px-3 rounded-md border transition-all ${enhancementAction === "sharpen" ? "bg-indigo-500 text-white border-indigo-600" : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"}`}
+                                className={`text-xs py-2 px-3 rounded-md border transition-all ${enhancementAction === "sharpen" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:bg-accent"}`}
                             >
                                 Sharpen / Upscale
                             </button>
                         </div>
                     </div>
+
+                    {/* Face Cleanup */}
+                    {faceCleanupPrompts.length > 0 && (
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-1.5 text-xs mb-1.5">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Face Cleanup</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                {faceCleanupPrompts.map((prompt) => (
+                                    <button
+                                        key={prompt.id}
+                                        onClick={() => setCleanupAction(cleanupAction === prompt.id ? null : prompt.id)}
+                                        className={`text-xs py-2 px-3 rounded-md border transition-all text-left ${cleanupAction === prompt.id
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
+                                            }`}
+                                    >
+                                        {prompt.alias || prompt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-border" />
 
                 {/* Style Selector */}
                 <div className="space-y-2">
@@ -300,8 +364,8 @@ export default function PhotoEditorControls({
                                 key={s.value}
                                 onClick={() => setStyle(s.value)}
                                 className={`text-xs py-1.5 px-2 rounded-md border transition-all ${style === s.value
-                                    ? "bg-indigo-500 text-white border-indigo-600 shadow-sm"
-                                    : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                                    : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                     }`}
                             >
                                 {s.label}
@@ -312,13 +376,13 @@ export default function PhotoEditorControls({
 
                 {onGenerate && (
                     <>
-                        <div className="h-px bg-white/10" />
+                        <div className="h-px bg-border" />
                         <button
                             onClick={onGenerate}
                             disabled={isGenerating || !canGenerate}
                             className={`w-full py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all ${isGenerating || !canGenerate
-                                ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-                                : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg hover:shadow-indigo-500/25"
+                                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                : "bg-primary text-primary-foreground shadow-glow hover:brightness-110"
                                 }`}
                         >
                             {isGenerating ? (
