@@ -177,16 +177,16 @@ export default function ImageComposerControls({
     return (
         <>
             <div
-                className={`bg-white/80 dark:bg-black/60 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl text-slate-800 dark:text-slate-100 overflow-y-auto max-h-[80vh] ${className}`}
+                className={`p-4 text-card-foreground ${className}`}
             >
-                <div className="flex items-center justify-between mb-4 sticky top-0 bg-white/5 backdrop-blur-md p-2 -mx-2 rounded-lg z-10">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider opacity-70">
+                <div className="sticky top-0 z-10 -mx-4 mb-4 flex items-center justify-between border-b border-border bg-card/90 px-4 py-2.5 backdrop-blur-md">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Image Composer
                     </h3>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleReset}
-                            className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                            className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                             title="Reset all"
                         >
                             <RotateCcw className="w-4 h-4" />
@@ -216,8 +216,8 @@ export default function ImageComposerControls({
                                             key={group.id}
                                             onClick={() => setSelectedGroupId(group.id)}
                                             className={`px-2 py-1 text-[10px] rounded-full whitespace-nowrap transition-colors ${selectedGroupId === group.id
-                                                ? "bg-indigo-500 text-white"
-                                                : "bg-white/10 text-slate-400 hover:bg-white/20"
+                                                ? "bg-primary text-primary-foreground"
+                                                : "bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground"
                                                 }`}
                                         >
                                             {group.label}
@@ -226,13 +226,13 @@ export default function ImageComposerControls({
                                 </div>
                             )}
                             <div className="relative mb-2">
-                                <Search className="absolute left-2 top-2 w-3.5 h-3.5 text-slate-400" />
+                                <Search className="absolute left-2 top-2 size-3.5 text-muted-foreground" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search inspiration..."
-                                    className="w-full pl-8 pr-2 py-1.5 text-xs border border-white/10 rounded-md bg-black/20 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    className="w-full rounded-md border border-input bg-background/60 py-1.5 pl-8 pr-2 text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/35"
                                 />
                             </div>
                             <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
@@ -247,12 +247,12 @@ export default function ImageComposerControls({
                                             key={sample.id}
                                             onClick={() => handleSampleSelect(sample)}
                                             className={`flex items-center gap-3 p-2 rounded-lg border transition-all group cursor-pointer ${selectedSampleId === sample.id
-                                                ? "bg-indigo-500/10 border-indigo-500 ring-1 ring-indigo-500"
-                                                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/30"
+                                                ? "border-primary bg-primary/10 ring-1 ring-primary"
+                                                : "border-border bg-secondary/50 hover:border-primary/40 hover:bg-accent"
                                                 }`}
                                         >
                                             <div
-                                                className="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-slate-800 group/image"
+                                                className="group/image relative size-12 shrink-0 overflow-hidden rounded-md bg-muted"
                                                 onClick={(e) => handleOpenPreview(e, sample.image)}
                                             >
                                                 <Image
@@ -261,7 +261,7 @@ export default function ImageComposerControls({
                                                     fill
                                                     className="object-cover transition-transform group-hover/image:scale-110"
                                                 />
-                                                <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center">
+                                                <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-colors flex items-center justify-center">
                                                     <Maximize2 className="w-4 h-4 text-white opacity-0 group-hover/image:opacity-100 transition-opacity drop-shadow-md" />
                                                 </div>
                                             </div>
@@ -277,7 +277,7 @@ export default function ImageComposerControls({
                         </div>
                     )}
 
-                    <div className="h-px bg-white/10" />
+                    <div className="h-px bg-border" />
 
                     {/* Composition Style */}
                     <div className="space-y-2">
@@ -295,8 +295,8 @@ export default function ImageComposerControls({
                                         setCompositionStyle(s.value);
                                     }}
                                     className={`text-xs py-2 px-3 rounded-md border text-left transition-all ${compositionStyle === s.value && !selectedSampleId
-                                        ? "bg-indigo-500 text-white border-indigo-600 shadow-sm"
-                                        : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                        ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                                        : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                         }`}
                                 >
                                     <div className="font-medium">{s.label}</div>
@@ -317,8 +317,8 @@ export default function ImageComposerControls({
                                 <button
                                     onClick={() => setLayout("grid")}
                                     className={`flex-1 p-2 rounded-md border flex justify-center ${layout === "grid"
-                                        ? "bg-indigo-500 text-white border-indigo-600"
-                                        : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                        ? "border-primary bg-primary text-primary-foreground"
+                                        : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                         }`}
                                     title="Grid"
                                 >
@@ -327,8 +327,8 @@ export default function ImageComposerControls({
                                 <button
                                     onClick={() => setLayout("horizontal")}
                                     className={`flex-1 p-2 rounded-md border flex justify-center ${layout === "horizontal"
-                                        ? "bg-indigo-500 text-white border-indigo-600"
-                                        : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                        ? "border-primary bg-primary text-primary-foreground"
+                                        : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                         }`}
                                     title="Horizontal"
                                 >
@@ -337,8 +337,8 @@ export default function ImageComposerControls({
                                 <button
                                     onClick={() => setLayout("vertical")}
                                     className={`flex-1 p-2 rounded-md border flex justify-center ${layout === "vertical"
-                                        ? "bg-indigo-500 text-white border-indigo-600"
-                                        : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                        ? "border-primary bg-primary text-primary-foreground"
+                                        : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                         }`}
                                     title="Vertical"
                                 >
@@ -348,26 +348,26 @@ export default function ImageComposerControls({
                         </div>
                     )}
 
-                    <div className="h-px bg-white/10" />
+                    <div className="h-px bg-border" />
 
                     {/* Advanced Features (Nano Banana) */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-medium opacity-50 uppercase tracking-wider">Advanced Features</h4>
+                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Advanced Features</h4>
 
                         {/* Character Consistency */}
                         <button
                             onClick={() => setCharacterConsistency(!characterConsistency)}
                             className={`w-full flex items-center justify-between text-xs py-2 px-3 rounded-md border transition-all ${characterConsistency
-                                ? "bg-indigo-500 text-white border-indigo-600"
-                                : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                ? "border-primary bg-primary/10 text-foreground"
+                                : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                 }`}
                         >
                             <div className="flex items-center gap-2">
                                 <UserCheck className="w-3.5 h-3.5" />
                                 <span>Maintain Character Identity</span>
                             </div>
-                            <div className={`w-8 h-4 rounded-full relative transition-colors ${characterConsistency ? "bg-white/30" : "bg-black/10"}`}>
-                                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow-sm transition-transform ${characterConsistency ? "left-4.5" : "left-0.5"}`} style={{ left: characterConsistency ? 'calc(100% - 14px)' : '2px' }} />
+                            <div className={`relative h-4 w-8 shrink-0 rounded-full transition-colors ${characterConsistency ? "bg-primary" : "bg-muted"}`}>
+                                <div className={`absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow-sm transition-transform duration-200 ${characterConsistency ? "translate-x-4" : "translate-x-0"}`} />
                             </div>
                         </button>
 
@@ -375,16 +375,16 @@ export default function ImageComposerControls({
                         <button
                             onClick={() => setMatchLighting(!matchLighting)}
                             className={`w-full flex items-center justify-between text-xs py-2 px-3 rounded-md border transition-all ${matchLighting
-                                ? "bg-indigo-500 text-white border-indigo-600"
-                                : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                ? "border-primary bg-primary/10 text-foreground"
+                                : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                 }`}
                         >
                             <div className="flex items-center gap-2">
                                 <Lightbulb className="w-3.5 h-3.5" />
                                 <span>Harmonize Lighting</span>
                             </div>
-                            <div className={`w-8 h-4 rounded-full relative transition-colors ${matchLighting ? "bg-white/30" : "bg-black/10"}`}>
-                                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow-sm transition-transform ${matchLighting ? "left-4.5" : "left-0.5"}`} style={{ left: matchLighting ? 'calc(100% - 14px)' : '2px' }} />
+                            <div className={`relative h-4 w-8 shrink-0 rounded-full transition-colors ${matchLighting ? "bg-primary" : "bg-muted"}`}>
+                                <div className={`absolute left-0.5 top-0.5 size-3 rounded-full bg-background shadow-sm transition-transform duration-200 ${matchLighting ? "translate-x-4" : "translate-x-0"}`} />
                             </div>
                         </button>
 
@@ -399,12 +399,12 @@ export default function ImageComposerControls({
                                 value={textIntegration}
                                 onChange={(e) => setTextIntegration(e.target.value)}
                                 placeholder="Enter text to render..."
-                                className="w-full text-xs p-2 rounded-md border border-white/20 bg-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                className="w-full rounded-md border border-input bg-background/60 p-2 text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/35"
                             />
                         </div>
                     </div>
 
-                    <div className="h-px bg-white/10" />
+                    <div className="h-px bg-border" />
 
                     {/* Vibe */}
                     <div className="space-y-2">
@@ -418,8 +418,8 @@ export default function ImageComposerControls({
                                     key={v.value}
                                     onClick={() => setVibe(v.value)}
                                     className={`text-xs py-1.5 px-2 rounded-md border transition-all ${vibe === v.value
-                                        ? "bg-indigo-500 text-white border-indigo-600"
-                                        : "bg-white/40 border-transparent hover:bg-white/60 text-slate-700"
+                                        ? "border-primary bg-primary text-primary-foreground"
+                                        : "border-border bg-secondary text-secondary-foreground hover:bg-accent"
                                         }`}
                                 >
                                     {v.label}
@@ -435,7 +435,7 @@ export default function ImageComposerControls({
                                 <Wand2 className="w-3.5 h-3.5" />
                                 <span>Complexity</span>
                             </div>
-                            <span className="opacity-70">
+                            <span className="tabular-nums text-muted-foreground">
                                 {density < 30 ? "Minimal" : density > 70 ? "Complex" : "Balanced"}
                             </span>
                         </div>
@@ -445,19 +445,19 @@ export default function ImageComposerControls({
                             max="100"
                             value={density}
                             onChange={(e) => setDensity(parseInt(e.target.value))}
-                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500"
+                            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
                         />
                     </div>
 
                     {onGenerate && (
                         <>
-                            <div className="h-px bg-white/10" />
+                            <div className="h-px bg-border" />
                             <button
                                 onClick={onGenerate}
                                 disabled={isGenerating || !canGenerate}
                                 className={`w-full py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all ${isGenerating || !canGenerate
-                                    ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-                                    : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg hover:shadow-indigo-500/25"
+                                    ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                    : "bg-primary text-primary-foreground shadow-glow hover:brightness-110"
                                     }`}
                             >
                                 {isGenerating ? (

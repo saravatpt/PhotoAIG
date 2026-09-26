@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Check, CreditCard, Loader2, Sparkles } from "lucide-react";
+import { Check, CreditCard, Loader2, Sparkles } from "lucide-react";
+import { Modal } from "@/components/ui/modal";
 import { loadStripe } from "@stripe/stripe-js";
 
 // Initialize Stripe outside component to avoid recreation
@@ -41,8 +42,6 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
     const [selectedTier, setSelectedTier] = useState<number | null>(1); // Default to Basic (300 credits)
     const [customCredits, setCustomCredits] = useState("");
     const [showCustom, setShowCustom] = useState(false);
-
-    if (!isOpen) return null;
 
     const handlePurchase = async (credits: number, amount: number) => {
         if (!stripePromise) {
@@ -107,31 +106,17 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
     const customPrice = customCredits ? calculatePrice(parseInt(customCredits) || 0) : 0;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-[90vh] overflow-y-auto">
-                {/* Close Button */}
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 z-10"
-                >
-                    <X className="w-5 h-5" />
-                </button>
-
-                {/* Header */}
-                <div className="p-6 text-center border-b border-slate-100 dark:border-slate-800 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20">
-                    <div className="mx-auto w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
-                        <CreditCard className="w-6 h-6" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                        Credits & Pricing
-                    </h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">
-                        Top up your balance and view usage rates
-                    </p>
-                </div>
-
+        <Modal
+            open={isOpen}
+            onClose={onClose}
+            size="lg"
+            title="Credits & Pricing"
+            description="Top up your balance and view usage rates"
+            icon={<CreditCard className="size-5" aria-hidden="true" />}
+        >
+            <div>
                 {/* Content */}
-                <div className="p-6">
+                <div>
                     {/* Pricing Tiers Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         {PRICING_TIERS.map((tier, index) => (
@@ -142,12 +127,12 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                                     setShowCustom(false);
                                 }}
                                 className={`relative group border-2 rounded-xl p-4 transition-all cursor-pointer ${selectedTier === index && !showCustom
-                                    ? "border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/10"
-                                    : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700"
+                                    ? "border-primary bg-primary/8"
+                                    : "border-border hover:border-primary/50"
                                     }`}
                             >
                                 {tier.popular && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm flex items-center gap-1">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm flex items-center gap-1">
                                         <Sparkles className="w-3 h-3" />
                                         Best Value
                                     </div>
@@ -155,33 +140,33 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
 
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <h3 className="font-bold text-lg text-slate-900 dark:text-white">
+                                        <h3 className="font-bold text-lg text-foreground">
                                             {tier.credits} Credits
                                         </h3>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        <p className="text-xs text-muted-foreground">
                                             {tier.label}
                                         </p>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                                        <div className="text-2xl font-bold text-foreground">
                                             ${tier.price.toFixed(2)}
                                         </div>
-                                        <div className="text-xs text-slate-400">
+                                        <div className="text-xs text-muted-foreground">
                                             ${(tier.price / tier.credits * 100).toFixed(2)}/100 credits
                                         </div>
                                     </div>
                                 </div>
 
                                 <ul className="space-y-1.5">
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+                                    <li className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                                         <span>~{tier.credits} standard images</span>
                                     </li>
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+                                    <li className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                                         <span>~{Math.floor(tier.credits / 10)} short videos</span>
                                     </li>
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+                                    <li className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                                         <span>Credits never expire</span>
                                     </li>
@@ -197,26 +182,26 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                                 setShowCustom(!showCustom);
                                 setSelectedTier(null);
                             }}
-                            className="w-full text-left border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 hover:border-indigo-400 transition-colors"
+                            className="w-full text-left border-2 border-dashed border-input rounded-xl p-4 hover:border-primary/60 transition-colors"
                         >
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="font-semibold text-slate-900 dark:text-white">
+                                    <h3 className="font-semibold text-foreground">
                                         Custom Amount
                                     </h3>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-xs text-muted-foreground">
                                         Enter your desired credit amount
                                     </p>
                                 </div>
-                                <div className="text-indigo-600 dark:text-indigo-400 font-medium">
+                                <div className="text-primary font-medium">
                                     {showCustom ? "Hide" : "Show"}
                                 </div>
                             </div>
                         </button>
 
                         {showCustom && (
-                            <div className="mt-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50">
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <div className="mt-4 p-4 border border-border rounded-xl bg-muted/50">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Number of Credits (min: 10)
                                 </label>
                                 <input
@@ -225,19 +210,19 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                                     value={customCredits}
                                     onChange={(e) => setCustomCredits(e.target.value)}
                                     placeholder="Enter amount..."
-                                    className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-2.5 border border-input rounded-lg bg-elevated text-foreground placeholder:text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 />
                                 {customCredits && parseInt(customCredits) >= 10 && (
-                                    <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                                    <div className="mt-3 p-3 bg-primary/10 rounded-lg">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-sm text-slate-700 dark:text-slate-300">
+                                            <span className="text-sm text-foreground">
                                                 Calculated Price:
                                             </span>
-                                            <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                                            <span className="text-lg font-bold text-primary">
                                                 ${customPrice.toFixed(2)}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        <p className="text-xs text-muted-foreground mt-1">
                                             Rate: ${(customPrice / parseInt(customCredits) * 100).toFixed(2)}/100 credits
                                         </p>
                                     </div>
@@ -256,7 +241,7 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             }
                         }}
                         disabled={loading || (showCustom && (!customCredits || parseInt(customCredits) < 10)) || (!showCustom && selectedTier === null)}
-                        className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 px-4 bg-primary text-primary-foreground hover:brightness-110 font-medium rounded-lg shadow-glow transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? (
                             <>
@@ -270,42 +255,42 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                         )}
                     </button>
 
-                    <p className="text-center text-xs text-slate-400 mt-4">
+                    <p className="text-center text-xs text-muted-foreground mt-4">
                         Secure payment via Stripe. Credits never expire.
                     </p>
 
                     {/* Credit Usage Rates */}
-                    <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-                        <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-indigo-500" />
+                    <div className="mt-8 pt-6 border-t border-border">
+                        <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
                             Credit Usage Rates
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Image Generation</p>
+                                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Image Generation</p>
                                 <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="flex justify-between text-foreground p-2 rounded-lg bg-card">
                                         <span>Gemini Flash 2.5</span>
                                         <span className="font-medium">1 credit</span>
                                     </div>
-                                    <div className="flex justify-between text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="flex justify-between text-foreground p-2 rounded-lg bg-card">
                                         <span>Imagen 4.0</span>
                                         <span className="font-medium">2 credits</span>
                                     </div>
-                                    <div className="flex justify-between text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="flex justify-between text-foreground p-2 rounded-lg bg-card">
                                         <span>Nano Banana Pro</span>
                                         <span className="font-medium">3 credits</span>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Video Generation</p>
+                                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Video Generation</p>
                                 <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="flex justify-between text-foreground p-2 rounded-lg bg-card">
                                         <span>Veo 2</span>
                                         <span className="font-medium">10 credits</span>
                                     </div>
-                                    <div className="flex justify-between text-slate-700 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                    <div className="flex justify-between text-foreground p-2 rounded-lg bg-card">
                                         <span>Veo 3</span>
                                         <span className="font-medium">25 credits</span>
                                     </div>
@@ -315,6 +300,6 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Modal>
     );
 }

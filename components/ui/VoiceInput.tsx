@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Mic, MicOff, Globe } from "lucide-react";
+import { Popover } from "@/components/ui/popover";
 
 interface VoiceInputProps {
     onTranscript: (text: string) => void;
@@ -105,8 +106,8 @@ export default function VoiceInput({ onTranscript, className = "" }: VoiceInputP
             <button
                 onClick={toggleListening}
                 className={`relative h-10 w-10 flex items-center justify-center rounded-full transition-all ${isListening
-                        ? "bg-red-500 text-white animate-pulse"
-                        : "bg-white/50 hover:bg-white/70 text-slate-700"
+                        ? "bg-destructive text-destructive-foreground animate-pulse"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     }`}
                 title={isListening ? "Stop listening" : "Start voice input"}
             >
@@ -115,8 +116,8 @@ export default function VoiceInput({ onTranscript, className = "" }: VoiceInputP
                 {/* Recording Indicator */}
                 {isListening && (
                     <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive"></span>
                     </span>
                 )}
             </button>
@@ -125,21 +126,21 @@ export default function VoiceInput({ onTranscript, className = "" }: VoiceInputP
             <div className="relative">
                 <button
                     onClick={() => setShowLanguages(!showLanguages)}
-                    className="h-10 w-10 flex items-center justify-center rounded-full bg-white/50 hover:bg-white/70 text-slate-700 transition-colors"
+                    className="h-10 w-10 flex items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     title="Select language"
                 >
                     <Globe className="w-5 h-5" />
                 </button>
 
-                {showLanguages && (
-                    <>
-                        <div
-                            className="fixed inset-0 z-40"
-                            onClick={() => setShowLanguages(false)}
-                        />
-                        <div className="absolute bottom-12 right-0 z-50 w-56 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-80 overflow-y-auto">
-                            <div className="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
-                                <h4 className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                <Popover
+                    open={showLanguages}
+                    onClose={() => setShowLanguages(false)}
+                    align="top-right"
+                    className="w-56"
+                >
+                        <div className="custom-scrollbar max-h-80 overflow-y-auto">
+                            <div className="p-2 border-b border-border bg-card">
+                                <h4 className="text-xs font-medium text-foreground">
                                     Voice Language
                                 </h4>
                             </div>
@@ -152,8 +153,8 @@ export default function VoiceInput({ onTranscript, className = "" }: VoiceInputP
                                             setShowLanguages(false);
                                         }}
                                         className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${selectedLanguage === lang.code
-                                                ? "bg-indigo-500 text-white"
-                                                : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+                                                ? "bg-primary text-primary-foreground"
+                                                : "hover:bg-accent text-foreground"
                                             }`}
                                     >
                                         {lang.label}
@@ -161,13 +162,12 @@ export default function VoiceInput({ onTranscript, className = "" }: VoiceInputP
                                 ))}
                             </div>
                         </div>
-                    </>
-                )}
+                </Popover>
             </div>
 
             {/* Interim Transcript Tooltip */}
             {interimTranscript && (
-                <div className="absolute bottom-12 left-0 z-50 bg-slate-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg max-w-xs">
+                <div className="absolute bottom-12 left-0 z-[var(--z-popover)] bg-foreground text-background text-xs px-3 py-2 rounded-lg shadow-elevated max-w-xs">
                     {interimTranscript}
                 </div>
             )}

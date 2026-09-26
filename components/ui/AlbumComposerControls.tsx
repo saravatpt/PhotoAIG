@@ -129,14 +129,14 @@ export default function AlbumComposerControls({
     };
 
     return (
-        <div className={`bg-white/80 dark:bg-black/60 backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-xl text-slate-800 dark:text-slate-100 overflow-y-auto max-h-[80vh] ${className}`}>
-            <div className="flex items-center justify-between mb-4 sticky top-0 bg-white/5 backdrop-blur-md p-2 -mx-2 rounded-lg z-10">
-                <h3 className="text-sm font-semibold uppercase tracking-wider opacity-70">
+        <div className={`p-4 text-card-foreground ${className}`}>
+            <div className="sticky top-0 z-10 -mx-4 mb-4 flex items-center justify-between border-b border-border bg-card/90 px-4 py-2.5 backdrop-blur-md">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Album Composer
                 </h3>
                 <button
                     onClick={handleReset}
-                    className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                    className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     title="Reset all"
                 >
                     <RotateCcw className="w-4 h-4" />
@@ -151,7 +151,7 @@ export default function AlbumComposerControls({
                         <span>Source Image (Subject)</span>
                     </div>
                     <div
-                        className={`relative aspect-video rounded-lg border-2 border-dashed transition-colors cursor-pointer overflow-hidden ${sourceImage ? "border-indigo-500/50 bg-indigo-500/5" : "border-white/20 hover:border-white/40 hover:bg-white/5"
+                        className={`relative aspect-video rounded-lg border-2 border-dashed transition-colors cursor-pointer overflow-hidden ${sourceImage ? "border-primary/60 bg-primary/8" : "border-border hover:border-primary/40 hover:bg-accent"
                             }`}
                         onClick={() => document.getElementById("album-source-upload")?.click()}
                     >
@@ -178,7 +178,7 @@ export default function AlbumComposerControls({
                     </div>
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-border" />
 
                 {/* Theme Selection */}
                 <div className="space-y-2">
@@ -187,13 +187,13 @@ export default function AlbumComposerControls({
                         <span>Select Album Style</span>
                     </div>
                     <div className="relative mb-2">
-                        <Search className="absolute left-2 top-2 w-3.5 h-3.5 text-slate-400" />
+                        <Search className="absolute left-2 top-2 size-3.5 text-muted-foreground" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search styles..."
-                            className="w-full pl-8 pr-2 py-1.5 text-xs border border-white/10 rounded-md bg-black/20 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="w-full rounded-md border border-input bg-background/60 py-1.5 pl-8 pr-2 text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/35"
                         />
                     </div>
                     {samples.length > 0 ? (
@@ -208,8 +208,8 @@ export default function AlbumComposerControls({
                                         key={sample.id}
                                         onClick={() => handleSampleSelect(sample)}
                                         className={`relative aspect-square rounded-lg overflow-hidden border cursor-pointer group ${selectedSampleId === sample.id
-                                            ? "ring-2 ring-indigo-500 border-transparent"
-                                            : "border-white/10 hover:border-white/30"
+                                            ? "border-transparent ring-2 ring-primary"
+                                            : "border-border hover:border-primary/40"
                                             }`}
                                     >
                                         <Image
@@ -218,7 +218,7 @@ export default function AlbumComposerControls({
                                             fill
                                             className="object-cover"
                                         />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                                             <Maximize2
                                                 className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md absolute top-2 right-2"
                                                 onClick={(e) => handleOpenPreview(e, sample.image)}
@@ -235,7 +235,7 @@ export default function AlbumComposerControls({
                     )}
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-border" />
 
                 {/* Prompts Input */}
                 <div className="space-y-2">
@@ -246,7 +246,7 @@ export default function AlbumComposerControls({
                         </div>
                         <button
                             onClick={handleAddPrompt}
-                            className="text-indigo-500 hover:text-indigo-400 flex items-center gap-1"
+                            className="flex items-center gap-1 text-primary transition-colors hover:brightness-125"
                         >
                             <Plus className="w-3 h-3" /> Add
                         </button>
@@ -264,7 +264,7 @@ export default function AlbumComposerControls({
                                     />
                                 </div>
                                 {item.image && (
-                                    <div className="w-8 h-8 relative rounded overflow-hidden shrink-0 mt-1 border border-white/20">
+                                    <div className="relative mt-1 size-8 shrink-0 overflow-hidden rounded border border-border">
                                         <Image src={item.image} alt="Style" fill className="object-cover" />
                                     </div>
                                 )}
@@ -273,12 +273,12 @@ export default function AlbumComposerControls({
                                     value={item.prompt}
                                     onChange={(e) => handlePromptChange(index, e.target.value)}
                                     placeholder={`Prompt ${index + 1}...`}
-                                    className={`flex-1 text-xs p-2 rounded-md border border-white/20 bg-white/40 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${item.selected === false ? "opacity-50" : ""}`}
+                                    className={`flex-1 rounded-md border border-input bg-background/60 p-2 text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/35 ${item.selected === false ? "opacity-50" : ""}`}
                                 />
                                 {items.length > 1 && (
                                     <button
                                         onClick={() => handleRemovePrompt(index)}
-                                        className="p-2 text-red-400 hover:bg-red-500/10 rounded-md"
+                                        className="rounded-md p-2 text-destructive transition-colors hover:bg-destructive/10"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
@@ -286,21 +286,21 @@ export default function AlbumComposerControls({
                             </div>
                         ))}
                         {items.length === 0 && (
-                            <div className="text-xs opacity-50 text-center py-4 border border-dashed border-white/20 rounded-lg">
+                            <div className="rounded-lg border border-dashed border-border py-4 text-center text-xs text-muted-foreground">
                                 Select an album to load prompts
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className="h-px bg-white/10" />
+                <div className="h-px bg-border" />
 
                 <button
                     onClick={onGenerate}
                     disabled={isGenerating || !selectedSampleId || !sourceImage || items.every(p => !p.prompt.trim())}
                     className={`w-full py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all ${isGenerating || !selectedSampleId || !sourceImage || items.every(p => !p.prompt.trim())
-                        ? "bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-                        : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg hover:shadow-indigo-500/25"
+                        ? "bg-muted text-muted-foreground cursor-not-allowed"
+                        : "bg-primary text-primary-foreground shadow-glow hover:brightness-110"
                         }`}
                 >
                     {isGenerating ? (
